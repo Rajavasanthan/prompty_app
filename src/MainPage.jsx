@@ -35,9 +35,9 @@ function MainPage() {
       try {
         const formData = new FormData();
         formData.append("file", promptImage);
-        formData.append("upload_preset", "eaf26hf6");
+        formData.append("upload_preset", "xxxxx");
         const cloudinaryRes = await axios.post(
-          "https://api.cloudinary.com/v1_1/dutetepcq/image/upload",
+          "https://api.cloudinary.com/v1_1/xxxxx/image/upload",
           formData
         );
 
