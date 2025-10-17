@@ -3,7 +3,7 @@ function PromptCard({item}) {
   return (
       <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col">
             <img
-              src={item.imageUrl}
+              src={item.imageUrls[0]}
               alt="Card image"
               class="w-full h-48 object-cover"
             />
