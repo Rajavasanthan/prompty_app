@@ -29,7 +29,7 @@ function Header({ handlePromptCreate }) {
           />
         </div>
         <div>
-          <button onClick={handleLogout}>Logout</button>
+          <button className="cursor-pointer" onClick={handleLogout}>Logout</button>
         </div>
       </div>
     </header>

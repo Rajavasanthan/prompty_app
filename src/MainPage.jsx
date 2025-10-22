@@ -7,7 +7,7 @@ import axios from "axios";
 import { Cloudinary } from "@cloudinary/url-gen/index";
 import ImageUpload from "./ImageUpload";
 import config from "./config";
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 
 function MainPage() {
   const location = useLocation();
@@ -15,11 +15,14 @@ function MainPage() {
   const [promptImage, setPromptImage] = useState(null);
   const [currentLocation, setCurrentLocation] = useState("");
   const [randSeed, setRandSeed] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
       title: "",
       prompt: "",
+      platform: "",
     },
     validate: (values) => {
       let error = {};
@@ -29,15 +32,20 @@ function MainPage() {
       if (!values.prompt) {
         error.prompt = "Required";
       }
+
+      if (!values.platform) {
+        error.platform = "Required";
+      }
       return error;
     },
     onSubmit: async (values) => {
       try {
+        setIsUploading(true);
         const formData = new FormData();
         formData.append("file", promptImage);
-        formData.append("upload_preset", "xxxxx");
+        formData.append("upload_preset", "eaf26hf6");
         const cloudinaryRes = await axios.post(
-          "https://api.cloudinary.com/v1_1/xxxxx/image/upload",
+          "https://api.cloudinary.com/v1_1/dutetepcq/image/upload",
           formData
         );
 
@@ -56,8 +64,15 @@ function MainPage() {
         console.log(response);
         setModel(false);
         setRandSeed(Math.random());
+        formik.resetForm();
+        formData.delete("file");
+        formData.delete("upload_preset");
+        setPromptImage(null);
+        setIsUploading(false);
+        navigate("/my-prompts");
         // fetchPrompts();
       } catch (error) {
+        setIsUploading(false);
         console.log(error);
       }
     },
@@ -67,27 +82,8 @@ function MainPage() {
     setModel(true);
   };
 
-  let handlePromptSearch = async (searchText) => {
-    try {
-      const search = await axios.get(
-        `https://6461c1c2491f9402f4aa0565.mockapi.io/prompts`,
-        {
-          params: {
-            title: searchText,
-          },
-        }
-      );
-      console.log(search);
-      // setPrompts(search.data);
-    } catch (error) {
-      if (error.status == 404) {
-        // setPrompts([]);
-      }
-
-      if (error.status == 500) {
-        alert("Something went wrong...");
-      }
-    }
+  const handlePromptSearch = (searchText) => {
+    navigate(`/?search=${searchText}`);
   };
 
   const handleFileChange = async (e) => {
@@ -257,6 +253,27 @@ function MainPage() {
 
                   <div>
                     <label
+                      for="countries"
+                      class="block mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Select an option
+                    </label>
+                    <select
+                      id="countries"
+                      name="platform"
+                      value={formik.values.platform}
+                      onChange={formik.handleChange}
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    >
+                      <option selected>Choose a platform</option>
+                      <option value="nano_banana">Nano Banana</option>
+                      <option value="chat_gpt">ChatGPT</option>
+                    </select>
+                    <span>{formik.errors.prompt}</span>
+                  </div>
+
+                  <div>
+                    <label
                       for="message"
                       class="block mb-2 text-sm font-medium text-gray-900 "
                     >
@@ -280,8 +297,9 @@ function MainPage() {
                 <input
                   data-modal-hide="static-modal"
                   type="submit"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                  value={"Submit"}
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer"
+                  value={`${isUploading ? "Creating..." : "Submit"}`}
+                  disabled={isUploading}
                 />
               </div>
             </form>

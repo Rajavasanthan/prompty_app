@@ -2,10 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import config from "./config";
 import PromptCard from "./PromptCard";
-import { useOutletContext } from "react-router";
+import { useOutletContext, useSearchParams } from "react-router";
 
 function AllPrompts() {
   const context = useOutletContext();
+  const [searchParams] = useSearchParams();
   const [prompts, setPrompts] = useState([]);
   const [loading, setLoading] = useState(false);
   let fetchPrompts = async () => {
@@ -23,12 +24,45 @@ function AllPrompts() {
     }
   };
 
-//   useEffect(() => {
-//     fetchPrompts();
-//   }, []);
+  let handlePromptSearch = async (searchText) => {
+    try {
+      const search = await axios.get(`${config.api}/prompt/search-prompts`, {
+        params: {
+          search: searchText,
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log(search);
+      setPrompts(search.data);
+    } catch (error) {
+      if (error.status == 404) {
+        // setPrompts([]);
+      }
+
+      if (error.status == 500) {
+        alert("Something went wrong...");
+      }
+    }
+  };
 
   useEffect(() => {
-    fetchPrompts();
+    // fetchPrompts();
+    console.log(searchParams.get("search"));
+    if (searchParams.get("search")) {
+      // search
+      console.log("Search");
+      handlePromptSearch(searchParams.get("search"));
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!searchParams.get("search")) {
+      // search
+      console.log("normal");
+      fetchPrompts();
+    }
   }, [context]);
   return (
     <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-12">

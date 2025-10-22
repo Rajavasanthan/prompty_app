@@ -1,6 +1,9 @@
 import { useFormik } from "formik";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router";
 
 function Searchbox({ handlePromptSearch }) {
+  const [searchParams] = useSearchParams();
   const formik = useFormik({
     initialValues: {
       search: "",
@@ -13,9 +16,25 @@ function Searchbox({ handlePromptSearch }) {
       return error;
     },
     onSubmit: (values) => {
+      console.log(values);
       handlePromptSearch(values.search);
     },
   });
+
+  useEffect(() => {
+    console.log("searchParams update",searchParams.get("search"))
+    if(searchParams.get("search")){
+      formik.setFieldValue("search",searchParams.get("search"));
+    }else{
+      formik.resetForm()
+    }
+  }, [searchParams]);
+
+  // useEffect(() => {
+  //   console.log(searchParams.get("search"))
+  //   formik.setFieldValue("search",searchParams.get("search"));
+  // }, []);
+
   return (
     <div class="max-w-2xl mx-auto mt-6 px-4">
       <form onSubmit={formik.handleSubmit}>
