@@ -1,5 +1,5 @@
 const config = {
-    api : "http://localhost:3000"
+    api : "https://prompty-backend-cypv.onrender.com"
 }
 
 export default config;
