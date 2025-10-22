@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useFormik } from "formik";
 import config from "./config";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 function Register() {
   const navigate = useNavigate()
@@ -161,12 +161,12 @@ function Register() {
               />
               <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
-                <a
-                  href="#"
+                <Link
+                  to="/login"
                   class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Login here
-                </a>
+                </Link>
               </p>
             </form>
           </div>
