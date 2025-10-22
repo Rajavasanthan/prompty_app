@@ -2,13 +2,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import config from "./config";
 import PromptCard from "./PromptCard";
-import { useOutletContext, useSearchParams } from "react-router";
+import { useNavigate, useOutletContext, useSearchParams } from "react-router";
 
 function AllPrompts() {
   const context = useOutletContext();
   const [searchParams] = useSearchParams();
   const [prompts, setPrompts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   let fetchPrompts = async () => {
     try {
       setLoading(true);
@@ -18,9 +19,12 @@ function AllPrompts() {
         },
       });
       setPrompts(prompts.data);
+      console.log(prompts)
       setLoading(false);
+      
     } catch (error) {
       console.log(error);
+      navigate("/login");
     }
   };
 
