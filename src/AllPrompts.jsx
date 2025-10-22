@@ -19,9 +19,8 @@ function AllPrompts() {
         },
       });
       setPrompts(prompts.data);
-      console.log(prompts)
+      console.log(prompts);
       setLoading(false);
-      
     } catch (error) {
       console.log(error);
       navigate("/login");
